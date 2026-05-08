@@ -1,8 +1,10 @@
 const UserModel = require("../models/user.model");
 const bcrypt = require('bcrypt')
 const signup = async (req, res) => {
-  console.log("Signup controller called with:", req.body);
-  try {
+     
+     try {
+          // const { fullName, email, mobile, password } = req.body
+          //   const hashedPassword = await bcrypt.hash(password, 12);
     await UserModel.create(req.body);
     res.status(200).json({ message: "Account created successfully" });
   } catch (err) {

@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Filemoon | Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet" />
+
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        scroll-behavior: smooth;
+      }
+      .sidebar-transition {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .nav-item.active {
+        background: #f43f5e;
+        color: white;
+        box-shadow: 0 10px 15px -3px rgba(244, 63, 94, 0.2);
+      }
+      .upload-area {
+        border: 2px dashed #e2e8f0;
+        transition: all 0.2s ease;
+      }
+      .upload-area:hover {
+        border-color: #7c3aed;
+        background: #f5f3ff;
+      }
+      /* Custom scrollbar for a cleaner look */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body class="bg-slate-50 flex h-screen overflow-hidden">
+    <aside
+      id="sidebar"
+      class="sidebar-transition fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 flex flex-col transform translate-x-0 shadow-xl lg:shadow-none">
+      <div class="p-6 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="bg-violet-600 p-2 rounded-xl">
+            <i data-lucide="moon" class="text-white w-6 h-6"></i>
+          </div>
+          <span class="text-xl font-bold text-gray-800 tracking-tight"
+            >Filemoon</span
+          >
+        </div>
+        <button
+          onclick="toggleSidebar()"
+          class="lg:hidden p-2 hover:bg-slate-100 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5 text-gray-400"></i>
+        </button>
+      </div>
+
+      <div class="px-4 mb-6">
+        <div
+          class="flex items-center gap-3 p-4 bg-indigo-600 rounded-2xl text-white shadow-lg shadow-indigo-100">
+          <img
+            src="https://api.dicebear.com/7.x/avataaars/svg?seed=Saurav"
+            class="w-10 h-10 rounded-full border-2 border-white/20" />
+          <div class="overflow-hidden">
+            <p class="text-sm font-bold truncate">Er Saurav</p>
+            <p class="text-xs opacity-80 truncate">saurav@gmail.com</p>
+          </div>
+        </div>
+      </div>
+
+      <nav class="flex-1 px-4 space-y-2">
+        <button
+          onclick="showSection('dash')"
+          id="btn-dash"
+          class="nav-item active w-full flex items-center gap-3 p-3.5 rounded-xl transition-all group">
+          <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+          <span class="font-semibold">Dashboard</span>
+        </button>
+        <button
+          onclick="showSection('files')"
+          id="btn-files"
+          class="nav-item w-full flex items-center gap-3 p-3.5 rounded-xl text-slate-500 hover:bg-slate-100 transition-all">
+          <i data-lucide="folder-open" class="w-5 h-5"></i>
+          <span class="font-semibold">My Files</span>
+        </button>
+        <button
+          onclick="showSection('history')"
+          id="btn-history"
+          class="nav-item w-full flex items-center gap-3 p-3.5 rounded-xl text-slate-500 hover:bg-slate-100 transition-all">
+          <i data-lucide="history" class="w-5 h-5"></i>
+          <span class="font-semibold">History</span>
+        </button>
+      </nav>
+
+      <div class="p-4 border-t border-slate-100">
+        <a
+          href="index.html"
+          class="flex items-center gap-3 p-3.5 rounded-xl text-rose-500 hover:bg-rose-50 transition-all font-semibold">
+          <i data-lucide="log-out" class="w-5 h-5"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </aside>
+
+    <main
+      id="main-area"
+      class="sidebar-transition flex-1 flex flex-col min-w-0 ml-64 bg-slate-50">
+      <header
+        class="bg-white/80 backdrop-blur-md border-b border-gray-200 p-4 flex justify-between items-center sticky top-0 z-40">
+        <div class="flex items-center gap-4">
+          <button
+            onclick="toggleSidebar()"
+            class="p-2.5 hover:bg-slate-100 rounded-xl text-slate-600 transition-colors">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+          <h2
+            id="view-title"
+            class="text-lg font-bold text-slate-800 hidden sm:block">
+            Dashboard Overview
+          </h2>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div
+            class="hidden md:flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-full text-sm font-medium text-slate-500">
+            <i data-lucide="calendar" class="w-4 h-4"></i>
+            <span>07 May 2026</span>
+          </div>
+          <button
+            class="p-2.5 hover:bg-slate-100 rounded-full text-slate-400 relative">
+            <i data-lucide="bell" class="w-5 h-5"></i>
+            <span
+              class="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
+          </button>
+        </div>
+      </header>
+
+      <div class="flex-1 overflow-y-auto p-6 lg:p-8">
+        <section
+          id="section-dash"
+          class="animate__animated animate__fadeIn space-y-8">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div
+              class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-5 hover:shadow-md transition-all group">
+              <div
+                class="bg-indigo-600 p-4 rounded-2xl text-white group-hover:scale-110 transition-transform">
+                <i data-lucide="video" class="w-8 h-8"></i>
+              </div>
+              <div>
+                <p
+                  class="text-slate-400 text-xs font-bold uppercase tracking-widest">
+                  Videos
+                </p>
+                <p class="text-3xl font-extrabold text-slate-800">25,609</p>
+              </div>
+            </div>
+            <div
+              class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-5 hover:shadow-md transition-all group">
+              <div
+                class="bg-blue-500 p-4 rounded-2xl text-white group-hover:scale-110 transition-transform">
+                <i data-lucide="music" class="w-8 h-8"></i>
+              </div>
+              <div>
+                <p
+                  class="text-slate-400 text-xs font-bold uppercase tracking-widest">
+                  Audio
+                </p>
+                <p class="text-3xl font-extrabold text-slate-800">15,662</p>
+              </div>
+            </div>
+            <div
+              class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-5 hover:shadow-md transition-all group">
+              <div
+                class="bg-orange-500 p-4 rounded-2xl text-white group-hover:scale-110 transition-transform">
+                <i data-lucide="file-text" class="w-8 h-8"></i>
+              </div>
+              <div>
+                <p
+                  class="text-slate-400 text-xs font-bold uppercase tracking-widest">
+                  PDF Documents
+                </p>
+                <p class="text-3xl font-extrabold text-slate-800">25,609</p>
+              </div>
+            </div>
+            <div
+              class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-5 hover:shadow-md transition-all group">
+              <div
+                class="bg-emerald-500 p-4 rounded-2xl text-white group-hover:scale-110 transition-transform">
+                <i data-lucide="image" class="w-8 h-8"></i>
+              </div>
+              <div>
+                <p
+                  class="text-slate-400 text-xs font-bold uppercase tracking-widest">
+                  Images
+                </p>
+                <p class="text-3xl font-extrabold text-slate-800">750</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div
+              class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm h-80 flex flex-col">
+              <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <i data-lucide="clock" class="w-5 h-5 text-indigo-500"></i>
+                Recent Files
+              </h3>
+              <div
+                class="flex-1 flex flex-col items-center justify-center text-slate-400 italic">
+                <i data-lucide="layers" class="w-12 h-12 mb-3 opacity-20"></i>
+                <p>No activity recorded yet</p>
+              </div>
+            </div>
+            <div
+              class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm h-80 flex flex-col">
+              <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <i data-lucide="share-2" class="w-5 h-5 text-emerald-500"></i>
+                Shared with me
+              </h3>
+              <div
+                class="flex-1 flex flex-col items-center justify-center text-slate-400 italic">
+                <i
+                  data-lucide="user-plus"
+                  class="w-12 h-12 mb-3 opacity-20"></i>
+                <p>Your shared inbox is empty</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="section-files"
+          class="hidden animate__animated animate__fadeIn space-y-6">
+          <div
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <h2 class="text-2xl font-extrabold text-slate-800">My Library</h2>
+            <button
+              onclick="showSection('upload')"
+              class="bg-violet-600 text-white px-6 py-3 rounded-2xl flex items-center gap-2 hover:bg-violet-700 transition-all shadow-lg shadow-violet-200 font-bold">
+              <i data-lucide="plus-circle" class="w-5 h-5"></i> Upload New File
+            </button>
+          </div>
+
+          <div
+            class="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left">
+                <thead
+                  class="bg-slate-900 text-white text-xs uppercase tracking-widest">
+                  <tr>
+                    <th class="p-5 font-bold">Filename</th>
+                    <th class="p-5 font-bold">Category</th>
+                    <th class="p-5 font-bold">Size</th>
+                    <th class="p-5 font-bold">Date Created</th>
+                    <th class="p-5 font-bold text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                  <tr class="hover:bg-slate-50 transition-colors group">
+                    <td class="p-5 text-slate-700 font-semibold italic">
+                      introduction_to_html.png
+                    </td>
+                    <td class="p-5">
+                      <span
+                        class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold"
+                        >Image</span
+                      >
+                    </td>
+                    <td class="p-5 text-slate-500 text-sm">20.03 Mb</td>
+                    <td class="p-5 text-slate-500 text-sm">24 June 2025</td>
+                    <td class="p-5">
+                      <div class="flex justify-center gap-2">
+                        <button
+                          class="p-2 bg-rose-50 text-rose-500 rounded-xl hover:bg-rose-500 hover:text-white transition-all">
+                          <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                        <button
+                          class="p-2 bg-blue-50 text-blue-500 rounded-xl hover:bg-blue-500 hover:text-white transition-all">
+                          <i data-lucide="download" class="w-4 h-4"></i>
+                        </button>
+                        <button
+                          class="p-2 bg-amber-50 text-amber-500 rounded-xl hover:bg-amber-500 hover:text-white transition-all">
+                          <i data-lucide="share" class="w-4 h-4"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="section-upload"
+          class="hidden max-w-2xl mx-auto space-y-8 animate__animated animate__fadeInUp">
+          <div class="flex items-center gap-4">
+            <button
+              onclick="showSection('files')"
+              class="p-2 hover:bg-white rounded-full border border-slate-200 transition-colors">
+              <i data-lucide="chevron-left" class="w-6 h-6 text-slate-600"></i>
+            </button>
+            <h2 class="text-2xl font-extrabold text-slate-800">Upload Media</h2>
+          </div>
+
+          <div
+            class="bg-white p-10 rounded-[3rem] shadow-xl shadow-slate-200/50 border border-gray-100 space-y-8">
+            <div
+              class="upload-area rounded-[2.5rem] py-20 flex flex-col items-center justify-center cursor-pointer group"
+              onclick="document.getElementById('realFileInput').click()">
+              <div
+                class="bg-violet-100 p-8 rounded-full group-hover:scale-110 transition-all duration-300">
+                <i
+                  data-lucide="cloud-lightning"
+                  class="w-14 h-14 text-violet-600"></i>
+              </div>
+              <h3 class="mt-6 text-xl font-bold text-slate-800">
+                Drag & Drop Files
+              </h3>
+              <p class="text-slate-400 text-sm mt-2">
+                Maximum file size:
+                <span class="font-bold text-slate-600">100MB</span>
+              </p>
+              <input type="file" id="realFileInput" class="hidden" />
+              <span
+                class="mt-8 px-10 py-3 bg-slate-900 text-white rounded-2xl font-bold hover:bg-black transition-all"
+                >Browse Explorer</span
+              >
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <label class="text-xs font-bold text-slate-400 uppercase ml-2"
+                  >File Name</label
+                >
+                <input
+                  type="text"
+                  placeholder="e.g. Vacation_Vlog"
+                  class="w-full px-6 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-violet-500 outline-none transition-all" />
+              </div>
+              <div class="space-y-2">
+                <label class="text-xs font-bold text-slate-400 uppercase ml-2"
+                  >Category</label
+                >
+                <select
+                  class="w-full px-6 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-violet-500 outline-none appearance-none cursor-pointer">
+                  <option>Video</option>
+                  <option>Audio</option>
+                  <option>PDF</option>
+                  <option>Image</option>
+                </select>
+              </div>
+            </div>
+
+            <button
+              class="w-full bg-violet-600 text-white py-5 rounded-[2rem] font-black text-xl hover:bg-violet-700 transition-all shadow-2xl shadow-violet-200 hover:-translate-y-1">
+              Finish & Upload
+            </button>
+          </div>
+        </section>
+
+        <section
+          id="section-history"
+          class="hidden animate__animated animate__fadeIn space-y-6">
+          <h2 class="text-2xl font-extrabold text-slate-800">Activity Logs</h2>
+          <div
+            class="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
+            <table class="w-full text-left">
+              <thead
+                class="bg-slate-900 text-white text-xs uppercase tracking-widest">
+                <tr>
+                  <th class="p-5 font-bold">Event Name</th>
+                  <th class="p-5 font-bold">User Email</th>
+                  <th class="p-5 font-bold">Timestamp</th>
+                  <th class="p-5 font-bold text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-50">
+                <tr>
+                  <td class="p-5 text-slate-700 font-medium">
+                    Deleted 'Old_Project.pdf'
+                  </td>
+                  <td class="p-5 text-slate-500">ersaurav@gmail.com</td>
+                  <td class="p-5 text-slate-500 text-sm">
+                    24 June 2025 | 14:30
+                  </td>
+                  <td class="p-5 text-center">
+                    <i
+                      data-lucide="check-circle"
+                      class="w-5 h-5 text-emerald-500 mx-auto"></i>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      // Initialize Icons
+      lucide.createIcons();
+
+      // 1. Sidebar Toggle Logic (Full Hide)
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const mainArea = document.getElementById("main-area");
+
+        if (sidebar.classList.contains("translate-x-0")) {
+          // HIDE
+          sidebar.classList.replace("translate-x-0", "-translate-x-full");
+          mainArea.classList.replace("ml-64", "ml-0");
+        } else {
+          // SHOW
+          sidebar.classList.replace("-translate-x-full", "translate-x-0");
+          mainArea.classList.replace("ml-0", "ml-64");
+        }
+      }
+
+      // 2. SPA Section Switching Logic
+      function showSection(sectionId) {
+        // Hide all sections
+        document
+          .querySelectorAll("section")
+          .forEach((sec) => sec.classList.add("hidden"));
+        // Show the target section
+        document
+          .getElementById("section-" + sectionId)
+          .classList.remove("hidden");
+
+        // Update Page Title in Header
+        const titles = {
+          dash: "Dashboard Overview",
+          files: "My File Library",
+          history: "Activity History",
+          upload: "Upload Center",
+        };
+        document.getElementById("view-title").innerText =
+          titles[sectionId] || "Filemoon";
+
+        // Update Navigation Button Active State (Only for main nav)
+        if (["dash", "files", "history"].includes(sectionId)) {
+          document.querySelectorAll(".nav-item").forEach((btn) => {
+            btn.classList.remove("active");
+            btn.classList.add("text-slate-500", "hover:bg-slate-100");
+          });
+          document.getElementById("btn-" + sectionId).classList.add("active");
+          document
+            .getElementById("btn-" + sectionId)
+            .classList.remove("text-slate-500", "hover:bg-slate-100");
+        }
+      }
+
+      // Handle Mobile Sidebar Auto-Hide on section change
+      window.addEventListener("resize", () => {
+        if (window.innerWidth < 1024) {
+          document.getElementById("sidebar").classList.add("-translate-x-full");
+          document
+            .getElementById("main-area")
+            .classList.replace("ml-64", "ml-0");
+        } else {
+          document
+            .getElementById("sidebar")
+            .classList.remove("-translate-x-full");
+          document
+            .getElementById("main-area")
+            .classList.replace("ml-0", "ml-64");
+        }
+      });
+    </script>
+  </body>
+</html>
