@@ -4,9 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Filemoon | Login</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="icon" type="image/png" href="./favicon.png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios@1.16.0/dist/axios.min.js"></script>
-   
+
     <script src="https://cdn.jsdelivr.net/npm/notyf@3.10.0/notyf.min.js"></script>
     <link
       href="https://cdn.jsdelivr.net/npm/notyf@3.10.0/notyf.min.css"
@@ -38,7 +40,7 @@
         <p class="text-slate-400 font-medium mt-1">Welcome back, Explorer!</p>
       </div>
 
-      <form  class="space-y-5" onsubmit="login(event)">
+      <form class="space-y-5" onsubmit="login(event)">
         <div class="space-y-1">
           <label class="text-xs font-bold text-slate-400 uppercase ml-2"
             >Email Address</label
@@ -87,13 +89,10 @@
         </p>
       </div>
     </div>
-
-  <script src="js/login.js"></script>
-     <script>
+    <script src="./js/session.js"></script>
+    <script src="js/login.js"></script>
+    <script>
       lucide.createIcons();
-      
     </script>
   </body>
 </html>
-
-

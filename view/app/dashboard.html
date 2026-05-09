@@ -1,10 +1,13 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Filemoon | Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+    <link rel="icon" type="image/png" href="../favicon.png" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.16.0/dist/axios.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link
       rel="stylesheet"
@@ -34,6 +37,59 @@
         border-color: #7c3aed;
         background: #f5f3ff;
       }
+      .dark body {
+        background: #0b1220;
+      }
+      .dark #sidebar {
+        background: #111827;
+        border-color: #1f2937;
+      }
+      .dark #main-area {
+        background: #0b1220;
+      }
+      .dark #main-area header {
+        background: rgba(15, 23, 42, 0.86);
+        border-color: #1f2937;
+      }
+      .dark .bg-white {
+        background: #111827 !important;
+      }
+      .dark .text-slate-800,
+      .dark .text-slate-700,
+      .dark .text-slate-600,
+      .dark .text-slate-500 {
+        color: #e2e8f0 !important;
+      }
+      .dark .text-slate-400 {
+        color: #94a3b8 !important;
+      }
+      .dark .border-gray-100,
+      .dark .border-gray-200,
+      .dark .border-slate-100 {
+        border-color: #1f2937 !important;
+      }
+      .dark #header-date-chip {
+        background: #1e293b !important;
+        color: #cbd5e1 !important;
+      }
+      .dark #header-date-chip i {
+        color: #cbd5e1 !important;
+      }
+      .dark .shadow-sm,
+      .dark .shadow-lg,
+      .dark .shadow-xl,
+      .dark .shadow-2xl,
+      .dark .shadow-indigo-100,
+      .dark .shadow-violet-200,
+      .dark .shadow-slate-200\/50 {
+        box-shadow: none !important;
+      }
+      .profile-card {
+        background: linear-gradient(145deg, #06b6d4 0%, #3b82f6 100%);
+      }
+      .dark .profile-card {
+        background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+      }
       /* Custom scrollbar for a cleaner look */
       ::-webkit-scrollbar {
         width: 6px;
@@ -50,7 +106,7 @@
   <body class="bg-slate-50 flex h-screen overflow-hidden">
     <aside
       id="sidebar"
-      class="sidebar-transition fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 flex flex-col transform translate-x-0 shadow-xl lg:shadow-none">
+      class="sidebar-transition fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 flex flex-col transform translate-x-0 shadow-xl lg:shadow-none overflow-y-auto">
       <div class="p-6 flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div class="bg-violet-600 p-2 rounded-xl">
@@ -69,13 +125,14 @@
 
       <div class="px-4 mb-6">
         <div
-          class="flex items-center gap-3 p-4 bg-indigo-600 rounded-2xl text-white shadow-lg shadow-indigo-100">
+          class="profile-card flex flex-col items-center text-center gap-3 p-5 rounded-2xl text-white shadow-lg shadow-indigo-100">
           <img
-            src="https://api.dicebear.com/7.x/avataaars/svg?seed=Saurav"
-            class="w-10 h-10 rounded-full border-2 border-white/20" />
+            src="https://i.pravatar.cc/120?img=12"
+            alt="Profile avatar"
+            class="w-20 h-20 rounded-full border-4 border-white/30 object-cover" />
           <div class="overflow-hidden">
-            <p class="text-sm font-bold truncate">Er Saurav</p>
-            <p class="text-xs opacity-80 truncate">saurav@gmail.com</p>
+            <p class="text-2xl font-bold leading-tight truncate">John Doe</p>
+            <p class="text-sm opacity-90 truncate">azee@gmail.com</p>
           </div>
         </div>
       </div>
@@ -104,9 +161,10 @@
         </button>
       </nav>
 
-      <div class="p-4 border-t border-slate-100">
+      <div class="p-4 border-t border-slate-100 mt-auto">
         <a
-          href="index.html"
+          href="#"
+          onclick="logout()"
           class="flex items-center gap-3 p-3.5 rounded-xl text-rose-500 hover:bg-rose-50 transition-all font-semibold">
           <i data-lucide="log-out" class="w-5 h-5"></i>
           <span>Logout</span>
@@ -133,7 +191,14 @@
         </div>
 
         <div class="flex items-center gap-3">
+          <button
+            id="theme-toggle"
+            class="p-2.5 hover:bg-slate-100 rounded-full text-slate-500 transition-colors"
+            aria-label="Toggle theme">
+            <i id="theme-toggle-icon" data-lucide="moon" class="w-5 h-5"></i>
+          </button>
           <div
+            id="header-date-chip"
             class="hidden md:flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-full text-sm font-medium text-slate-500">
             <i data-lucide="calendar" class="w-4 h-4"></i>
             <span>07 May 2026</span>
@@ -409,76 +474,8 @@
       </div>
     </main>
 
-    <script>
-      // Initialize Icons
-      lucide.createIcons();
-
-      // 1. Sidebar Toggle Logic (Full Hide)
-      function toggleSidebar() {
-        const sidebar = document.getElementById("sidebar");
-        const mainArea = document.getElementById("main-area");
-
-        if (sidebar.classList.contains("translate-x-0")) {
-          // HIDE
-          sidebar.classList.replace("translate-x-0", "-translate-x-full");
-          mainArea.classList.replace("ml-64", "ml-0");
-        } else {
-          // SHOW
-          sidebar.classList.replace("-translate-x-full", "translate-x-0");
-          mainArea.classList.replace("ml-0", "ml-64");
-        }
-      }
-
-      // 2. SPA Section Switching Logic
-      function showSection(sectionId) {
-        // Hide all sections
-        document
-          .querySelectorAll("section")
-          .forEach((sec) => sec.classList.add("hidden"));
-        // Show the target section
-        document
-          .getElementById("section-" + sectionId)
-          .classList.remove("hidden");
-
-        // Update Page Title in Header
-        const titles = {
-          dash: "Dashboard Overview",
-          files: "My File Library",
-          history: "Activity History",
-          upload: "Upload Center",
-        };
-        document.getElementById("view-title").innerText =
-          titles[sectionId] || "Filemoon";
-
-        // Update Navigation Button Active State (Only for main nav)
-        if (["dash", "files", "history"].includes(sectionId)) {
-          document.querySelectorAll(".nav-item").forEach((btn) => {
-            btn.classList.remove("active");
-            btn.classList.add("text-slate-500", "hover:bg-slate-100");
-          });
-          document.getElementById("btn-" + sectionId).classList.add("active");
-          document
-            .getElementById("btn-" + sectionId)
-            .classList.remove("text-slate-500", "hover:bg-slate-100");
-        }
-      }
-
-      // Handle Mobile Sidebar Auto-Hide on section change
-      window.addEventListener("resize", () => {
-        if (window.innerWidth < 1024) {
-          document.getElementById("sidebar").classList.add("-translate-x-full");
-          document
-            .getElementById("main-area")
-            .classList.replace("ml-64", "ml-0");
-        } else {
-          document
-            .getElementById("sidebar")
-            .classList.remove("-translate-x-full");
-          document
-            .getElementById("main-area")
-            .classList.replace("ml-0", "ml-64");
-        }
-      });
-    </script>
+    <script src="../js/session.js"></script>
+    <script src="../js/dashboard.js"></script>
   </body>
 </html>
+

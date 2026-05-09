@@ -23,7 +23,7 @@ const signup = async (e) => {
        const {data} = await axios.post("http://localhost:8080/signup", payload)
           toast.success(data.message)
           setTimeout(() => {
-               location.href="index.html"
+               location.href="/index.html"
 
           }, 2000)
       
