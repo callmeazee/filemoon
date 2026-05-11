@@ -1,15 +1,28 @@
-const isProtectedPage = location.pathname.includes("/app/");
+const pathName = location.pathname;
+const isViewMode = pathName.startsWith("/view/");
+const isProtectedPage = ["/dashboard", "/files", "/history", "/view/app/"].some(
+  (p) => pathName.startsWith(p),
+);
+const isAuthPage = [
+  "/",
+  "/index",
+  "/index.html",
+  "/login",
+  "/signup",
+  "/view/index.html",
+  "/view/signup.html",
+].includes(pathName);
+const apiBase = typeof SERVER === "string" ? SERVER : "";
+axios.defaults.baseURL = apiBase;
 const THEME_STORAGE_KEY = "filemoonTheme";
 
 const clearToken = () => {
   localStorage.removeItem("authToken");
 };
 
-const getLoginPath = () => {
-  return location.pathname.startsWith("/view/")
-    ? "/view/index.html"
-    : "/index.html";
-};
+const getLoginPath = () => (isViewMode ? "/view/index.html" : "/login");
+const getDashboardPath = () =>
+  isViewMode ? "/view/app/dashboard.html" : "/dashboard";
 
 const redirectToLogin = () => {
   clearToken();
@@ -18,6 +31,10 @@ const redirectToLogin = () => {
 
 const logout = () => {
   redirectToLogin();
+};
+
+const redirectToDashboard = () => {
+  location.href = getDashboardPath();
 };
 
 const applyTheme = (theme) => {
@@ -69,12 +86,11 @@ const getSession = async () => {
     }
 
     const payload = { token: session };
-    const { data } = await axios.post(
-      "http://localhost:8080/token/verify",
-      payload,
-    );
+    const { data } = await axios.post("/api/token/verify", payload);
+    if (isAuthPage) redirectToDashboard();
     return data;
   } catch (err) {
+    clearToken();
     if (isProtectedPage) redirectToLogin();
     return null;
   }

@@ -33,7 +33,7 @@ const {
 } = require("./controller/file.controller");
 const { requireAuth, verifyToken } = require("./controller/token.controller");
 const { fetchDashboard } = require("./controller/dashboard.controller");
-const app = express();
+const app = express(); 
 app.listen(process.env.PORT || 8080);
 
 app.use(
@@ -71,18 +71,18 @@ app.get("/signup", (req, res) => {
   res.sendFile(p);
 }); 
 app.get("/login", (req, res) => {
-  const p = getPath("login.html");
+  const p = getPath("index.html");
   res.sendFile(p);
 });
-app.get("/app/dashboard", requireAuth, (req, res) => {
+app.get("/dashboard", (req, res) => {
   const p = getPath("app/dashboard.html");
   res.sendFile(p);
 }); 
-app.get("/app/myfiles", requireAuth, (req, res) => {
+app.get("/files", (req, res) => {
   const p = getPath("app/myfile.html");
   res.sendFile(p);
 });
-app.get("/app/history", requireAuth, (req, res) => {
+app.get("/history", (req, res) => {
   const p = getPath("app/history.html");
   res.sendFile(p);
 });

@@ -30,6 +30,8 @@ const userSchema = new Schema(
       type: String,
       trim: true,
       required: true,
+      lowercase: true,
+      
     },
   },
   { timestamps: true },
@@ -38,7 +40,7 @@ const userSchema = new Schema(
 userSchema.pre("save", async function () {
   const count = await model("User").countDocuments({ mobile: this.mobile });
 
-  //checking dublicate mobile
+  //checking duplicate mobile
   if (count > 0) throw new Error("Mobile number already exist");
 });
 

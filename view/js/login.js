@@ -6,11 +6,13 @@ const toast = new Notyf({
   },
 });
 
-const getDashboardPath = () => {
-  return location.pathname.startsWith("/view/")
-    ? "/view/app/dashboard.html"
-    : "/app/dashboard.html";
-};
+axios.defaults.baseURL = SERVER;
+
+// const getDashboardPath = () => {
+//   return location.pathname.startsWith("/view/")
+//     ? "/view/app/dashboard.html"
+//     : "/dashboard";
+// };
 
 const login = async (e) => {
   try {
@@ -21,12 +23,12 @@ const login = async (e) => {
       email: element.email.value,
       password: element.password.value,
     };
-    const { data } = await axios.post("http://localhost:8080/login", payload);
+    const { data } = await axios.post("/api/login", payload);
     toast.success(data.message);
 
     localStorage.setItem("authToken", data.token);
     setTimeout(() => {
-      location.href = getDashboardPath();
+      location.href = "/dashboard";
     }, 2000);
   } catch (err) {
     toast.error(err.response ? err.response.data.message : err.message);
