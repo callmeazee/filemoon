@@ -27,6 +27,7 @@ const login = async (e) => {
     toast.success(data.message);
 
     localStorage.setItem("authToken", data.token);
+    axios.defaults.headers.common.Authorization = `Bearer ${data.token}`;
     setTimeout(() => {
       location.href = "/dashboard";
     }, 2000);

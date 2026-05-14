@@ -22,7 +22,10 @@ const storage = multer.diskStorage({
     next(null, name);
   },
 });
-const upload = multer({ storage: storage });
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 200 * 1024 * 1024 },
+ });
 
 const { signup, login } = require("./controller/user.controller");
 const {
@@ -32,6 +35,7 @@ const {
   downloadFile,
 } = require("./controller/file.controller");
 const { requireAuth, verifyToken } = require("./controller/token.controller");
+const AuthMiddleware = require("./middleware/auth.middleware");
 const { fetchDashboard } = require("./controller/dashboard.controller");
 const app = express(); 
 app.listen(process.env.PORT || 8080);
@@ -91,12 +95,14 @@ app.get("/history", (req, res) => {
 
 
 
+
+
 // Api endpoints
 app.post("/api/signup", signup);
 app.post("/api/login", login);
-app.post("/api/file", requireAuth, upload.single("file"), createFile);
-app.get("/api/file", requireAuth, fetchFiles);
-app.delete("/api/file/:id", requireAuth, deleteFile);
-app.get("/api/file/dashboard", requireAuth, fetchDashboard);
-app.get("/api/file/download/:id", requireAuth, downloadFile);
+app.post("/api/file", AuthMiddleware, upload.single("file"), createFile);
+app.get("/api/file", AuthMiddleware, fetchFiles);
+app.delete("/api/file/:id", AuthMiddleware, deleteFile);
+app.get("/api/file/dashboard", AuthMiddleware, fetchDashboard);
+app.get("/api/file/download/:id",  downloadFile);
 app.post("/api/token/verify", verifyToken);

@@ -77,6 +77,14 @@ const initThemeToggle = (buttonId, iconId) => {
   });
 };
 
+const setAxiosAuthToken = (token) => {
+  if (token) {
+    axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+  } else {
+    delete axios.defaults.headers.common.Authorization;
+  }
+};
+
 const getSession = async () => {
   try {
     const session = localStorage.getItem("authToken");
@@ -85,11 +93,13 @@ const getSession = async () => {
       return null;
     }
 
+    setAxiosAuthToken(session);
     const payload = { token: session };
     const { data } = await axios.post("/api/token/verify", payload);
     if (isAuthPage) redirectToDashboard();
     return data;
   } catch (err) {
+    setAxiosAuthToken(null);
     clearToken();
     if (isProtectedPage) redirectToLogin();
     return null;

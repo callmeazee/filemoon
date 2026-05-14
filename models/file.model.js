@@ -2,6 +2,11 @@ const { Schema, model } = require("mongoose");
 
 const fileSchema = new Schema(
   {
+    name: {
+      type: String,
+      trim: true,
+      required: true,
+    },
     filename: {
       type: String,
       trim: true,
@@ -23,6 +28,13 @@ const fileSchema = new Schema(
     size: {
       type: Number,
       required: true,
+    },
+    category: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      enum: ["image", "video", "audio", "pdf", "other"],
+      default: "other",
     },
   },
   { timestamps: true },

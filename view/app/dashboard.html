@@ -15,6 +15,8 @@
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet" />
+    <link rel="stylesheet" href="../css/loader.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 
     <style>
       body {
@@ -36,6 +38,37 @@
       .upload-area:hover {
         border-color: #7c3aed;
         background: #f5f3ff;
+      }
+      .dark .upload-area {
+        border-color: #1f2937;
+      }
+      .dark .upload-area:hover {
+        border-color: #7c3aed;
+        background: #1e1b4b;
+      }
+      .select-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+      .select-wrapper select {
+        padding-right: 2.5rem;
+      }
+      .select-wrapper::after {
+        content: "";
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%234b5563' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: center;
+        pointer-events: none;
+      }
+      .dark .select-wrapper::after {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
       }
       .dark body {
         background: #0b1220;
@@ -84,6 +117,76 @@
       .dark .shadow-slate-200\/50 {
         box-shadow: none !important;
       }
+      .dark .hover\:bg-slate-50:hover {
+        background-color: #041c50 !important;
+      }
+      .dark .hover\:bg-slate-100:hover {
+        background-color: #041c50 !important;
+      }
+      .dark .hover\:bg-white:hover {
+        background-color: #041c50 !important;
+      }
+      .dark .hover\:bg-rose-50:hover {
+        background-color: rgb(168, 165, 165) !important;
+      }
+      .dark #section-upload .bg-white {
+        background: #111827 !important;
+      }
+      .dark #section-upload .bg-violet-100 {
+        background-color: rgba(124, 58, 237, 0.15) !important;
+      }
+      .dark #section-upload input,
+      .dark #section-upload select {
+        background-color: #1f2937 !important;
+        color: #e2e8f0 !important;
+      }
+      .dark #section-upload input,
+      .dark #section-upload select {
+        background-color: #1f2937 !important;
+        color: #e2e8f0 !important;
+      }
+      .dark #section-upload .select-wrapper select {
+        background-color: #1f2937 !important;
+        color: #e2e8f0 !important;
+      }
+      .dark #section-upload .select-wrapper select option {
+        background-color: #1f2937;
+        color: #e2e8f0;
+      }
+      .dark #section-upload .select-wrapper select option:checked {
+        background: #7c3aed;
+        color: #ffffff;
+      }
+      #section-upload .select-wrapper select option {
+        background-color: #ffffff;
+        color: #1f2937;
+      }
+      #section-upload .select-wrapper select option:checked {
+        background: #7c3aed;
+        color: #ffffff;
+      }
+      .input::placeholder {
+        color: #94a3b8 !important;
+      }
+      .dark #section-upload h2,
+      .dark #section-upload h3,
+      .dark #section-upload label,
+      .dark #section-upload p {
+        color: #e2e8f0 !important;
+      }
+      .dark #section-upload .border-slate-200 {
+        border-color: #1f2937 !important;
+      }
+      .dark #section-upload .text-slate-600 {
+        color: #94a3b8 !important;
+      }
+      .dark .upload-area {
+        border-color: #1f2937;
+      }
+      .dark .upload-area:hover {
+        border-color: #7c3aed;
+        background: #1e1b4b;
+      }
       .profile-card {
         background: linear-gradient(145deg, #06b6d4 0%, #3b82f6 100%);
       }
@@ -131,8 +234,12 @@
             alt="Profile avatar"
             class="w-20 h-20 rounded-full border-4 border-white/30 object-cover" />
           <div class="overflow-hidden">
-            <p class="text-2xl font-bold leading-tight truncate">John Doe</p>
-            <p class="text-sm opacity-90 truncate">azee@gmail.com</p>
+            <p
+              class="text-2xl font-bold leading-tight truncate capitalize"
+              id="name">
+              John doe
+            </p>
+            <p class="text-sm opacity-90 truncate" id="email">john@gmail.com</p>
           </div>
         </div>
       </div>
@@ -332,7 +439,7 @@
                     <th class="p-5 font-bold text-center">Actions</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-50">
+                <tbody id="files-tbody" class="divide-y divide-slate-50">
                   <tr class="hover:bg-slate-50 transition-colors group">
                     <td class="p-5 text-slate-700 font-semibold italic">
                       introduction_to_html.png
@@ -374,7 +481,7 @@
           <div class="flex items-center gap-4">
             <button
               onclick="showSection('files')"
-              class="p-2 hover:bg-white rounded-full border border-slate-200 transition-colors">
+              class="p-2 hover:bg-slate-100 rounded-full border border-slate-200 transition-colors">
               <i data-lucide="chevron-left" class="w-6 h-6 text-slate-600"></i>
             </button>
             <h2 class="text-2xl font-extrabold text-slate-800">Upload Media</h2>
@@ -396,9 +503,12 @@
               </h3>
               <p class="text-slate-400 text-sm mt-2">
                 Maximum file size:
-                <span class="font-bold text-slate-600">100MB</span>
+                <span class="font-bold text-slate-600">200MB</span>
               </p>
               <input type="file" id="realFileInput" class="hidden" />
+              <p id="selected-file-preview" class="mt-4 text-sm text-slate-500">
+                No file selected.
+              </p>
               <span
                 class="mt-8 px-10 py-3 bg-slate-900 text-white rounded-2xl font-bold hover:bg-black transition-all"
                 >Browse Explorer</span
@@ -413,24 +523,30 @@
                 <input
                   type="text"
                   placeholder="e.g. Vacation_Vlog"
+                  id="fileNameInput"
                   class="w-full px-6 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-violet-500 outline-none transition-all" />
               </div>
               <div class="space-y-2">
                 <label class="text-xs font-bold text-slate-400 uppercase ml-2"
                   >Category</label
                 >
-                <select
-                  class="w-full px-6 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-violet-500 outline-none appearance-none cursor-pointer">
-                  <option>Video</option>
-                  <option>Audio</option>
-                  <option>PDF</option>
-                  <option>Image</option>
-                </select>
+                <div class="select-wrapper">
+                  <select
+                    class="w-full px-6 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-violet-500 outline-none appearance-none cursor-pointer"
+                    id="categorySelect">
+                    <option value="other" default>Others</option>
+                    <option value="video">Video</option>
+                    <option value="audio">Audio</option>
+                    <option value="pdf">PDF</option>
+                    <option value="image">Image</option>
+                  </select>
+                </div>
               </div>
             </div>
 
             <button
-              class="w-full bg-violet-600 text-white py-5 rounded-[2rem] font-black text-xl hover:bg-violet-700 transition-all shadow-2xl shadow-violet-200 hover:-translate-y-1">
+              class="w-full bg-violet-600 text-white py-5 rounded-[2rem] font-black text-xl hover:bg-violet-700 transition-all shadow-2xl shadow-violet-200 hover:-translate-y-1"
+              id="finish-upload-btn">
               Finish & Upload
             </button>
           </div>
@@ -474,9 +590,104 @@
       </div>
     </main>
 
-     <script src="../js/env.js"></script>
+    <div id="upload-loader-overlay">
+      <div class="loader-card">
+        <!-- SVG Ring + counter -->
+        <div
+          id="loader-ring-area"
+          style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+          ">
+          <div class="loader-ring-wrapper">
+            <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient
+                  id="ringGradient"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="100%">
+                  <stop offset="0%" stop-color="#7c3aed" />
+                  <stop offset="100%" stop-color="#a78bfa" />
+                </linearGradient>
+              </defs>
+              <!-- Track -->
+              <circle class="ring-track" cx="80" cy="80" r="65" />
+              <!-- Progress -->
+              <circle
+                class="ring-progress"
+                cx="80"
+                cy="80"
+                r="65"
+                id="ring-progress" />
+            </svg>
+
+            <!-- Percent in center -->
+            <div class="loader-percent-text">
+              <span class="loader-percent-num" id="loader-percent-num">0</span>
+              <span class="loader-percent-sign">%</span>
+            </div>
+          </div>
+
+          <!-- Status label -->
+          <p class="loader-status-title" id="loader-status-title">
+            Preparing file…
+          </p>
+
+          <!-- File name pill -->
+          <span class="loader-file-name" id="loader-file-name">your file</span>
+
+          <!-- Thin progress bar -->
+          <div class="loader-bar-track" style="width: 100%">
+            <div class="loader-bar-fill" id="loader-bar-fill"></div>
+          </div>
+
+          <!-- Step dots -->
+          <div class="loader-steps">
+            <div class="loader-step" data-step="0">
+              <span class="step-dot"></span>
+              <span>Preparing</span>
+            </div>
+            <div class="loader-step-divider"></div>
+            <div class="loader-step" data-step="1">
+              <span class="step-dot"></span>
+              <span>Uploading</span>
+            </div>
+            <div class="loader-step-divider"></div>
+            <div class="loader-step" data-step="2">
+              <span class="step-dot"></span>
+              <span>Finishing</span>
+            </div>
+          </div>
+        </div>
+        <!-- /ring area -->
+
+        <!-- Success state (hidden until 100%) -->
+        <div
+          id="loader-success"
+          class="loader-success-icon"
+          style="display: none">
+          <div class="success-circle">
+            <svg viewBox="0 0 44 44">
+              <polyline class="check-path" points="8,22 18,32 36,14" />
+            </svg>
+          </div>
+          <p class="loader-success-label">Upload Complete!</p>
+          <p class="loader-success-sub">
+            Your file has been saved successfully
+          </p>
+        </div>
+      </div>
+      <!-- /loader-card -->
+    </div>
+
+    <script src="../js/env.js"></script>
     <script src="../js/session.js"></script>
+    <script src="../js/loader.js"></script>
     <script src="../js/dashboard.js"></script>
   </body>
 </html>
-

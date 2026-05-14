@@ -1,83 +1,13 @@
-const initializeDashboard = () => {
+const initializeMyFilePage = () => {
   const sidebar = document.getElementById("sidebar");
-  const mainArea = document.getElementById("main-area");
-
   if (window.innerWidth < 1024) {
     sidebar.classList.remove("translate-x-0");
     sidebar.classList.add("-translate-x-full");
-    mainArea.classList.remove("ml-64");
-    mainArea.classList.add("ml-0");
   }
 
-  window.onload = () => {
-    getUserDetails();
-    loadFiles();
+window.toggleSidebar = () => {
+    sidebar.classList.toggle("-translate-x-full");
   };
-
-  const getUserDetails = async () => {
-    const name = document.getElementById("name");
-    const email = document.getElementById("email");
-    const session = await getSession();
-
-    name.innerHTML = await session.fullname;
-    email.innerHTML = await session.email;
-  };
-
-  window.toggleSidebar = () => {
-    if (sidebar.classList.contains("translate-x-0")) {
-      sidebar.classList.replace("translate-x-0", "-translate-x-full");
-      mainArea.classList.replace("ml-64", "ml-0");
-    } else {
-      sidebar.classList.replace("-translate-x-full", "translate-x-0");
-      mainArea.classList.replace("ml-0", "ml-64");
-    }
-  };
-
-  window.showSection = (sectionId) => {
-    document
-      .querySelectorAll("section")
-      .forEach((section) => section.classList.add("hidden"));
-
-    const activeSection = document.getElementById("section-" + sectionId);
-    if (activeSection) activeSection.classList.remove("hidden");
-
-    const titles = {
-      dash: "Dashboard Overview",
-      files: "My File Library",
-      history: "Activity History",
-      upload: "Upload Center",
-    };
-
-    const viewTitle = document.getElementById("view-title");
-    if (viewTitle) viewTitle.innerText = titles[sectionId] || "Filemoon";
-
-    if (["dash", "files", "history"].includes(sectionId)) {
-      document.querySelectorAll(".nav-item").forEach((button) => {
-        button.classList.remove("active");
-        button.classList.add("text-slate-500", "hover:bg-slate-100");
-      });
-
-      const activeButton = document.getElementById("btn-" + sectionId);
-      if (activeButton) {
-        activeButton.classList.add("active");
-        activeButton.classList.remove("text-slate-500", "hover:bg-slate-100");
-      }
-    }
-    // Refresh files list every time the tab is opened
-    if (sectionId === "files") loadFiles();
-  };
-
-  window.addEventListener("resize", () => {
-    if (window.innerWidth < 1024) {
-      sidebar.classList.add("-translate-x-full");
-      sidebar.classList.remove("translate-x-0");
-      mainArea.classList.replace("ml-64", "ml-0");
-    } else {
-      sidebar.classList.remove("-translate-x-full");
-      sidebar.classList.add("translate-x-0");
-      mainArea.classList.replace("ml-0", "ml-64");
-    }
-  });
 
   if (typeof initThemeToggle === "function") {
     initThemeToggle("theme-toggle", "theme-toggle-icon");
@@ -85,6 +15,11 @@ const initializeDashboard = () => {
 
   if (typeof lucide !== "undefined") lucide.createIcons();
 };
+
+document.addEventListener("DOMContentLoaded", async () => {
+  initializeMyFilePage();
+  await loadFiles();
+});
 
 const demoFiles = [
   {
@@ -121,7 +56,7 @@ const renderFiles = (files = []) => {
     tbody.innerHTML = `
       <tr>
         <td colspan="5" class="p-8 text-center text-slate-400 italic">
-          No files uploaded yet. Use the Upload section to add media.
+          No files uploaded yet. Please upload a file to see it here.
         </td>
       </tr>`;
     return;
@@ -171,8 +106,7 @@ const renderFiles = (files = []) => {
   if (typeof lucide !== "undefined") lucide.createIcons();
 };
 
-// ── Fetch files from backend → render ────────────────────────────────────────
-window.loadFiles = async () => {
+const loadFiles = async () => {
   try {
     const res = await axios.get("/api/file");
     renderFiles(res.data);
@@ -182,16 +116,13 @@ window.loadFiles = async () => {
   }
 };
 
-// ── Delete file ───────────────────────────────────────────────────────────────
 window.deleteFile = async (id) => {
   if (!confirm("Are you sure you want to delete this file?")) return;
+
   try {
     await axios.delete(`/api/file/${id}`);
-    // Remove row from DOM without full reload
     const row = document.getElementById(`row-${id}`);
     if (row) row.remove();
-
-    // Show empty state if no rows left
     const tbody = document.getElementById("files-tbody");
     if (tbody && tbody.children.length === 0) renderFiles([]);
   } catch (err) {
@@ -199,9 +130,7 @@ window.deleteFile = async (id) => {
   }
 };
 
-// ── Download file ─────────────────────────────────────────────────────────────
 window.downloadFile = (id) => {
-  // Opens download in same tab — browser handles it as attachment
   window.location.href = `/api/file/download/${id}`;
 };
 
@@ -219,4 +148,25 @@ window.shareFile = async (id) => {
   window.prompt("Copy this download link", shareUrl);
 };
 
-document.addEventListener("DOMContentLoaded", initializeDashboard);
+
+
+const uploadFile = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await fetch("/api/file", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Upload failed");
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+   toast.error(err.response ? err.response.data.message : error.message || "Upload failed.");
+  }
+};

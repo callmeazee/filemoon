@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Filemoon | History</title>
+    <title>Filemoon | My Files</title>
     <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
     <link rel="icon" type="image/png" href="../favicon.png" />
     <script src="https://cdn.tailwindcss.com"></script>
@@ -91,13 +91,13 @@
         </a>
         <a
           href="/files"
-          class="nav-item w-full flex items-center gap-3 p-3.5 rounded-xl text-slate-400 hover:bg-slate-50 transition-all">
+          class="nav-item active w-full flex items-center gap-3 p-3.5 rounded-xl transition-all">
           <i data-lucide="folder-open" class="w-5 h-5"></i>
           <span class="font-bold">My Files</span>
         </a>
         <a
           href="/history"
-          class="nav-item active w-full flex items-center gap-3 p-3.5 rounded-xl transition-all">
+          class="nav-item w-full flex items-center gap-3 p-3.5 rounded-xl text-slate-400 hover:bg-slate-50 transition-all">
           <i data-lucide="history" class="w-5 h-5"></i>
           <span class="font-bold">History</span>
         </a>
@@ -119,38 +119,46 @@
         <button onclick="toggleSidebar()" class="p-2 bg-slate-50 rounded-xl">
           <i data-lucide="menu" class="w-6 h-6"></i>
         </button>
-        <h1 class="font-black text-slate-800">History</h1>
-        <button
-          id="theme-toggle"
-          class="p-2 bg-slate-50 rounded-xl text-slate-600">
-          <i id="theme-toggle-icon" data-lucide="moon" class="w-5 h-5"></i>
-        </button>
+        <h1 class="font-black text-slate-800">My Files</h1>
+        <div class="flex items-center gap-2">
+          <button
+            id="theme-toggle"
+            class="p-2 bg-slate-50 rounded-xl text-slate-600">
+            <i id="theme-toggle-icon" data-lucide="moon" class="w-5 h-5"></i>
+          </button>
+          <button
+            class="bg-violet-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-violet-100">
+            Upload
+          </button>
+        </div>
       </header>
 
       <div class="p-4 md:p-8 overflow-y-auto animate__animated animate__fadeIn">
         <div
           class="bg-white surface rounded-[2.5rem] border border-slate-50 shadow-sm overflow-hidden">
-          <table class="w-full text-left">
-            <thead class="bg-slate-900 text-white text-xs uppercase">
-              <tr>
-                <th class="p-5">Activity</th>
-                <th class="p-5">Time</th>
-              </tr>
-            </thead>
-            <tbody class="text-slate-600 divide-y divide-slate-50">
-              <tr>
-                <td class="p-5">
-                  You uploaded <span class="font-bold">report.pdf</span>
-                </td>
-                <td class="p-5 text-xs">2 mins ago</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left">
+              <thead class="bg-slate-900 text-white text-xs uppercase">
+                <tr>
+                  <th class="p-5 font-bold">Name</th>
+                  <th class="p-5 font-bold">Category</th>
+                  <th class="p-5 font-bold">Size</th>
+                  <th class="p-5 font-bold">Date</th>
+                  <th class="p-5 font-bold text-center">Actions</th>
+                </tr>
+              </thead>
+              <!-- tbody is populated by renderFiles() in files.js — do NOT put static rows here -->
+              <tbody
+                id="files-tbody"
+                class="divide-y divide-slate-50 text-slate-600"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </main>
+
     <script src="../js/env.js"></script>
     <script src="../js/session.js"></script>
-    <script src="../js/history.js"></script>
+    <script src="../js/files.js"></script>
   </body>
 </html>
